@@ -15,9 +15,6 @@ y = torch.tensor(y, dtype=torch.float32).reshape(-1, 1)
 print(X.shape)
 print(y.shape)
 
-loss_fn = nn.BCELoss() # binary cross-entropy
-optimizer = optim.Adam(model.parameters(), lr=0.001)
-
 model = nn.Sequential(
 nn.Linear(8, 12),
 nn.ReLU(),
@@ -27,7 +24,11 @@ nn.Linear(8, 1),
 nn.Sigmoid()
 )
 
-n_epochs = 300
+loss_fn = nn.BCELoss() # binary cross-entropy
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+loss_list=[]
+n_epochs = 500
 batch_size = 10
 for epoch in range(n_epochs):
     for i in range(0, len(X), batch_size):
@@ -38,5 +39,9 @@ for epoch in range(n_epochs):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-print(f'Finished epoch {epoch}, latest loss {loss}')
+    loss_list.append(loss)
+    print(f'Finished epoch {epoch}, latest loss {loss}')
 
+
+loss_list_np = [tensor.item() for tensor in loss_list]
+plt.plot(np.arange(n_epochs), loss_list_np)
